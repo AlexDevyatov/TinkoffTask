@@ -63,7 +63,9 @@ public class MainActivity extends AppCompatActivity {
                 String json = IOUtils.toString(connection.getInputStream(),
                         Charset.forName("UTF-8"));
                 Response response = gson.fromJson(json, Response.class);
-                payloads = response.getPayloads();
+                if (response.getResultCode().equals("OK")) {
+                    payloads = response.getPayloads();
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
                 Log.e(TAG, "MalformedURLException");
