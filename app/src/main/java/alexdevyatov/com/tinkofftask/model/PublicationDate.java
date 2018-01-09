@@ -8,6 +8,10 @@ public class PublicationDate {
 
     private Long milliseconds;
 
+    public PublicationDate(Long milliseconds) {
+        this.milliseconds = milliseconds;
+    }
+
     public Long getMilliseconds() {
         return milliseconds;
     }

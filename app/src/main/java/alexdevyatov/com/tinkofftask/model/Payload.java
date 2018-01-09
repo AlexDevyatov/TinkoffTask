@@ -12,6 +12,14 @@ public class Payload {
     private PublicationDate publicationDate;
     private Long bankInfoTypeId;
 
+    public Payload(Long id, String name, String text, PublicationDate publicationDate, Long bankInfoTypeId) {
+        this.id = id;
+        this.name = name;
+        this.text = text;
+        this.publicationDate = publicationDate;
+        this.bankInfoTypeId = bankInfoTypeId;
+    }
+
     public Long getId() {
         return id;
     }
