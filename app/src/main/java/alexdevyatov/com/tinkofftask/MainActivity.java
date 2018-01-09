@@ -1,6 +1,8 @@
 package alexdevyatov.com.tinkofftask;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
 
     private ListView listView;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +39,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listView = (ListView) findViewById(R.id.lv);
-        JsonParseTask parser = new JsonParseTask();
-        parser.execute();
-        try {
-            List<Payload> payloads = parser.get();
-            ArrayAdapter<Payload> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, payloads);
-            listView.setAdapter(adapter);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        final Context context = this;
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        JsonParseTask parser = new JsonParseTask();
+                        parser.execute();
+                        try {
+                            List<Payload> payloads = parser.get();
+                            ArrayAdapter<Payload> adapter = new ArrayAdapter<>(context,
+                                    android.R.layout.simple_list_item_1, payloads);
+                            listView.setAdapter(adapter);
+                            swipeRefreshLayout.setRefreshing(false);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
     class JsonParseTask extends AsyncTask<Void, Integer, List<Payload>> {
@@ -57,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             List<Payload> payloads = null;
             try {
                 URL url = new URL(REQUEST);
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 Gson gson = new GsonBuilder().create();
                 String json = IOUtils.toString(connection.getInputStream(),
