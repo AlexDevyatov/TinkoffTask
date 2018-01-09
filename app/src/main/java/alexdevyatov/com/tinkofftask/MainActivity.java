@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.lv);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        final Context context = this;
         swipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                         parser.execute();
                         try {
                             List<Payload> payloads = parser.get();
-                            ArrayAdapter<Payload> adapter = new ArrayAdapter<>(context,
+                            ArrayAdapter<Payload> adapter = new ArrayAdapter<>(MainActivity.this,
                                     android.R.layout.simple_list_item_1, payloads);
                             listView.setAdapter(adapter);
                             swipeRefreshLayout.setRefreshing(false);
