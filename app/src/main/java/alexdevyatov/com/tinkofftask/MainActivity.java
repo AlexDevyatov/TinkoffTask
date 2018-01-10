@@ -2,6 +2,7 @@ package alexdevyatov.com.tinkofftask;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -10,6 +11,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,10 +20,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        JsonParseTask task = new JsonParseTask();
+                        DataLoadTask task = new DataLoadTask();
                         task.execute();
                         try {
                             List<Payload> payloads = task.get();
@@ -109,9 +115,29 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+        listView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Payload payload = (Payload) parent.getAdapter().getItem(position);
+                        NewsLoadTask task = new NewsLoadTask();
+                        task.execute(payload.getId());
+                        try {
+                            String content = task.get();
+                            Intent intent = new Intent(MainActivity.this,
+                                    ContentDisplayActivity.class);
+                            intent.putExtra("content", content);
+                            startActivity(intent);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 
-    class JsonParseTask extends AsyncTask<Void, Integer, List<Payload>> {
+    class DataLoadTask extends AsyncTask<Void, Void, List<Payload>> {
 
         @Override
         protected List<Payload> doInBackground(Void... params) {
@@ -135,6 +161,38 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "IOException");
             }
             return payloads;
+        }
+    }
+
+    class NewsLoadTask extends AsyncTask<Long, Void, String> {
+
+        @Override
+        protected String doInBackground(Long... params) {
+            long payloadId = params[0];
+            String newsContent = null;
+            String request = "https://api.tinkoff.ru/v1/news_content?id=" + payloadId;
+            try {
+                URL url = new URL(request);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                Gson gson = new GsonBuilder().create();
+                String response = IOUtils.toString(connection.getInputStream(),
+                        Charset.forName("UTF-8"));
+                JSONObject json = new JSONObject(response);
+                JSONObject jsonPayload = json.getJSONObject("payload");
+                newsContent = jsonPayload.getString("content");
+                //newsContent = gson.fromJson(String.valueOf(jsonPayload.getJSONObject("content")), String.class);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return newsContent;
         }
     }
 
