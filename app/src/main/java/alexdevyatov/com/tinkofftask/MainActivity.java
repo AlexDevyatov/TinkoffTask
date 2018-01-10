@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
             ArrayAdapter<Payload> adapter = new ArrayAdapter<>(MainActivity.this,
                     android.R.layout.simple_list_item_1, payloads);
+            listView.setAdapter(null);
             listView.setAdapter(adapter);
         }
 
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                             ArrayAdapter<Payload> adapter = new ArrayAdapter<>(MainActivity.this,
                                     android.R.layout.simple_list_item_1, payloads);
+                            listView.setAdapter(null);
                             listView.setAdapter(adapter);
                             swipeRefreshLayout.setRefreshing(false);
                         } catch (InterruptedException e) {
