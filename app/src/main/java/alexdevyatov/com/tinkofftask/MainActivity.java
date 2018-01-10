@@ -30,6 +30,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 ));
             } while (cursor.moveToNext());
 
+            Collections.sort(payloads, Collections.<Payload>reverseOrder());
             ArrayAdapter<Payload> adapter = new ArrayAdapter<>(MainActivity.this,
                     android.R.layout.simple_list_item_1, payloads);
             listView.setAdapter(null);
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
 
+                            Collections.sort(payloads, Collections.<Payload>reverseOrder());
                             ArrayAdapter<Payload> adapter = new ArrayAdapter<>(MainActivity.this,
                                     android.R.layout.simple_list_item_1, payloads);
                             listView.setAdapter(null);

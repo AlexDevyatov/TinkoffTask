@@ -4,7 +4,7 @@ package alexdevyatov.com.tinkofftask.model;
  * Created by Алексей on 09.01.2018.
  */
 
-public class Payload {
+public class Payload implements Comparable<Payload> {
 
     private Long id;
     private String name;
@@ -89,5 +89,10 @@ public class Payload {
     @Override
     public String toString() {
         return text;
+    }
+
+    @Override
+    public int compareTo(Payload o) {
+        return this.publicationDate.getMilliseconds().compareTo(o.publicationDate.getMilliseconds());
     }
 }
