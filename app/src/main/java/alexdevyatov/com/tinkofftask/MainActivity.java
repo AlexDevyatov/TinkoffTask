@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query("news", null, null, null, null, null, null);
 
-        List<Payload> payloads = new ArrayList<>();
+        final List<Payload> payloads = new ArrayList<>();
         if (cursor.moveToFirst()) {
             int idIndex = cursor.getColumnIndex(DBHelper.ID);
             int nameIndex = cursor.getColumnIndex(DBHelper.NAME);

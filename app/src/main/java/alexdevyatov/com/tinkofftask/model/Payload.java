@@ -1,5 +1,7 @@
 package alexdevyatov.com.tinkofftask.model;
 
+import android.text.Html;
+
 /**
  * Created by Алексей on 09.01.2018.
  */
@@ -88,7 +90,7 @@ public class Payload implements Comparable<Payload> {
 
     @Override
     public String toString() {
-        return text;
+        return Html.fromHtml(text).toString().replaceAll("\n", "").trim();
     }
 
     @Override
