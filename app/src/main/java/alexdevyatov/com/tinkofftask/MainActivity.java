@@ -181,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject(response);
                 JSONObject jsonPayload = json.getJSONObject("payload");
                 newsContent = jsonPayload.getString("content");
-                //newsContent = gson.fromJson(String.valueOf(jsonPayload.getJSONObject("content")), String.class);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (ProtocolException e) {
